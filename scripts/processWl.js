@@ -45,6 +45,7 @@ async function main() {
     items.map( it => {
         it.proof =  calculator.getProof(it.address);
     });
+    console.log(`Root key for the smart contract :${calculator.root} `);
     fs.writeFileSync(jsonOutFile, JSON.stringify(items));
 
     // outputs
