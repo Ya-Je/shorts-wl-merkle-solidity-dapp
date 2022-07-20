@@ -6,7 +6,7 @@ Que de mots dans ce titre  agicheur  , résumons ici ce qui est décit dans lign
 Vous êtes le développeur d'un projet de NFT en charge de tout la partie technique , et les gars du marketing vous shoot un fichier 
 excel contenant les adresses et le nombre de NFT  possible à mint par personne.
 
-![This is an image](./mdimages/excel.png)
+![This is an image](./mdimages/math.jpg)
 
 
 A partir ce cette petite mise en bouche nous allons explorer le pourquoi et le comment de ce besoin.
@@ -41,7 +41,7 @@ Ce qui à aussi  secondairement l'avantage de ne pas rendre la liste des White l
 Comme souvent nous allons utiliser le travail des autres pour parvenir à nos fins, la bibliothèque [merkletreejs](https://github.com/miguelmota/merkletreejs)
 va nous pemettre de réaliser ceci simplement sans jamais avoir à effleurer toutes les complexités mathématiques cachées.
 
-je me suis même permis d'ajouter une couche pour masquer encore plus la compléxité  : **[MerkleCalculator.js](./scripts/MerkleCalculator.js)**
+je me suis même permis d'ajouter une couche pour masquer encore plus la compléxité  ici : **[classe : MerkleCalculator.js](./scripts/MerkleCalculator.js)**
 
 le principe est de préparer une liste d'objet en javascript ressemblant à ça :
 ```javascript
@@ -50,7 +50,7 @@ le principe est de préparer une liste d'objet en javascript ressemblant à ça 
     ...
 ]
 ```
-Ps : Dans le **[processWl.js](./scripts/processWl.js)**, vous pouvez trouver l'exeple pour le faire à partir d'un fichier CSV.
+Ps : Dans le **[ scrit : processWl.js](./scripts/processWl.js)**, vous pouvez trouver l'exeple pour le faire à partir d'un fichier CSV.
 
 lors du traitement de la liste on va 
 - Encoder chaque objet de la liste afin d'avoir une représentation sur forme de chaine de cararctère , on obtiendra ainsi une feuille de l'arbre
@@ -87,9 +87,23 @@ Le contenu  de  ``` "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol"
 ```
 
 Détaillons un peu quel est le fonctionnement, et les paramètres de cette focntion. 
-le prinicpe est le suivant l'utilsateur va fournir la preuve 
+le prinicpe est le suivant : 
+l'utilsateur vfa se connecter et récupérer ( à partir du fichier généré ci-dessus) les infomrations dont ils a besoin , sa quantité autorisé et se preuve.
+il va envoyer ces informations dans le smart contract. 
 
+le smart contract Encoder l'information de l'adress de l'appelant (``` msg.sender ```) et la quantité, il va ainsi pouvoir avoir la chaine de caractère représentant la  feuille , dans l'arbre de merkle.
+@openzeppelin nous offre une méthode qui nous permet de justement valider une feuille en prenant en compte la clé de l'arbre et la preuve généré par la feuille. 
+ce qui nous donne : 
 
+```solidity
+  function preSaleMint(uint256 quantity, bytes32[] memory proof) external {
+
+        bytes32 leaf = keccak256(abi.encode(msg.sender, quantity));
+        require(MerkleProof.verify(proof, merkleRoot, leaf), "PROOF_NOT_VALID");
+        
+        // etc .. 
+    }
+```
 
 
 # Ressources 
@@ -97,7 +111,11 @@ le prinicpe est le suivant l'utilsateur va fournir la preuve
 ## links 
 
 
+- [Explication du focntionnement de l'arbre de merkle](https://brilliant.org/wiki/merkle-tree/)
+- [La bibliothèque javascirpt : merkletreejs](https://www.npmjs.com/package/merkletreejs)
+- [La doc d'open zeppelin sur le sujet](https://docs.openzeppelin.com/contracts/3.x/api/cryptography)
+
+
 ##images 
 
-thanks :
-<a href="https://pixabay.com/fr/users/denisdoukhan-607002/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=1164424">Denis Doukhan</a> de <a href="https://pixabay.com/fr/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=1164424">Pixabay</a>
+Image par <a href="https://pixabay.com/fr/users/thedigitalartist-202249/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=1777917">Pete Linforth</a> de <a href="https://pixabay.com/fr/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=1777917">Pixabay</a>
