@@ -24,7 +24,6 @@ async function gereateWlList() {
 async function main() {
 
     const csvInFile = __dirname + '/wl.csv';
-    const jsonOutFile = __dirname + '/wl.json';
 
     // parse the CSV file and create a memory list from it
     const fileStream = fs.createReadStream(csvInFile);
@@ -45,6 +44,8 @@ async function main() {
     items.map( it => {
         it.proof =  calculator.getProof(it.address);
     });
+
+    const jsonOutFile = __dirname + '/wl.json';
     console.log(`Root key for the smart contract :${calculator.root} `);
     fs.writeFileSync(jsonOutFile, JSON.stringify(items));
 
