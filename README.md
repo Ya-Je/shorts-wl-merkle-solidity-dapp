@@ -40,7 +40,7 @@ La correspondance de ces deux éléments pouvant être validé mathématiquement
 **ps** : libre à vous d'aller vous instruire sur les merveilles mathématiques qui se cachent derrière cette triste simplification.(cf. Ressources)
 
 Tout l'intérêt de cette approche est qu'il nous suffit maintenant de stocker un simple clé la "merkleRoot" sur notre smart contract, ce qui est économiquement bien plus rentable.
-Ce qui a aussi secondairement l'avantage de ne pas rendre la liste des address en liste blanche lisible sur la blockchain.
+Ce qui a aussi secondairement l'avantage de ne pas rendre la liste des adresses en liste blanche visible sur la blockchain.
 
 ## Comment générer la "merkle root" et les preuves pour chaque adresse.
 
@@ -144,9 +144,9 @@ Le contenu  de  ``` "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol"
 <br/>Le principe est le suivant :
 l'utilisateur va se connecter et récupérer (à partir du fichier généré ci-dessus) les informations dont il a besoin : sa quantité autorisée et sa preuve.
 
-le smart contract va encoder l'information de l'adresse de l'appelant (``` msg.sender ```) et de la quantité passée comme argument, il va ainsi pouvoir avoir la chaine de caractère représentant **la feuille**, dans l'arbre de merkle.
+Le smart contract va encoder l'information de l'adresse de l'appelant (``` msg.sender ```) et de la quantité passée comme argument, il va ainsi pouvoir avoir la chaine de caractère représentant **la feuille**, dans l'arbre de merkle.
 @openzeppelin nous offre une méthode qui nous permet de justement valider une feuille en prenant en compte  : **la clé de l'arbre** et **la preuve** généré par la feuille.
-ce qui nous donne :
+Ce qui nous donne :
 
 ```solidity
   function preSaleMint(uint256 quantity, bytes32[] memory proof) external {
@@ -157,14 +157,12 @@ ce qui nous donne :
         // etc .. 
     }
 ```
-
 > :warning: **La sécurité de cette méthode**  repose sur le fait que pour calculer la feuille coté smart contract on utilise l'adresse de l'appelant : **msg.sender**, toute divergence par rapport à cette pratique nécessiterait d'avoir l'absolue certitude de ce que vous être en train de faire.
-
 
 ### Comment ajouter ce point dans nos tests unitaires
 
-Il ne faut bien sur pas oublier que tester  ( si les risques sont élévés est une obligation )
-Ansi dans hardhat vous pouvez tester le focntionnement de ce processus comme suit :
+Il ne faut bien sur pas oublier que tester si les risques sont élevés est une obligation.
+Ansi dans hardhat vous pouvez tester le fonctionnement de ce processus comme suit :
 
 ```javascript
     const [owner, user1, wl1, wl2, wl3] = await hre.ethers.getSigners();
