@@ -1,6 +1,6 @@
 # White list , Merkle tree , Solidity and Dapp
 
-![This is an image](./mdimages/math.jpg)
+![This is an image](./mdimages/math.jpg)[1]
 
 **_La petite histoire sous-jacente à ce petit projet de demonstration :_**
 Vous êtes le développeur d'un projet de NFT en charge de toute la partie technique, et les gars du marketing vous envoie un fichier
@@ -11,8 +11,21 @@ Dans cette page nous allons aborder différentes notions afin de comprendre et r
 ## Comment limiter l'accès à une méthode de votre "smartcontract" à certaine adresses
 
 ### Solidity mapping
-Un technique simple et efficace serait de créer un simple mapping _allowlist_ au niveau du smart contract qui nous permettrait de stocker l'adresse et le nombre de NFT possible à minter, et d'y ajouter par script le contenu du fichier excel.
-Cela est possible fonctionne bien, mais reste relativement couteux en gaz et nécessite en cas de volumes importants de faire un traitement par lots afin d'éviter le OOG (out of gaz )
+Un technique simple et efficace serait de créer un simple mapping _allowlist_ au niveau du smart contract qui nous permettrait de stocker l'adresse et le nombre de NFT possibles à minter, et d'y ajouter par script le contenu du fichier excel.
+Cela fonctionne bien, mais reste relativement couteux en gaz et nécessite en cas de volume important de faire un traitement par lots afin d'éviter le OOG (out of gaz )
+
+```solidity
+    mapping(address => uint256) public preSaleAllowList;
+    
+    function preSaleMint() external payable callerIsUser {
+        require(preSaleAllowList[msg.sender] > 0, "NO_ALLOCATION");
+    }
+
+    function seedPreSale(address[] memory addresses, uint256[] memory numSlots) external onlyOwner
+    {
+        // do
+    }
+```
 
 **ps** : nous n'allons pas retenir cette solution pour notre demonstration.
 
@@ -25,11 +38,13 @@ La correspondance de ces deux éléments pouvant être validé mathématiquement
 
 **ps** : libre à vous d'aller vous instruire sur les merveilles mathématiques qui se cachent derrière cette triste simplification.(cf. Ressources)
 
-Tout l'intérêt de cette approche, c'est qu'il nous suffit maintenant de stocker un simple clé la "merkleRoot" sur notre smart contract, ce qui est économiquement bien plus rentable.
-Ce qui a aussi secondairement l'avantage de ne pas rendre la liste des White liste publique sur la blockchain.
+Tout l'intérêt de cette approche est qu'il nous suffit maintenant de stocker un simple clé la "merkleRoot" sur notre smart contract, ce qui est économiquement bien plus rentable.
+Ce qui a aussi secondairement l'avantage de ne pas rendre la liste des address en liste blanche lisible sur la blockchain.
 
 ## Comment générer la "merkle root" et les preuves pour chaque adresse.
 
+
+Voici un petit résumé des différentes étapes de notre processus :
 ```mermaid
 
 stateDiagram-v2
@@ -42,9 +57,9 @@ stateDiagram-v2
     JsonFile --> [*]
 ```
 
-### Du fichier CSV vers la liste d'objets javascript
+Ce processus est fonctionnel dans le fichier : **[ scrit : processWl.js](./scripts/processWl.js)**
 
-Dans le **[ scrit : processWl.js](./scripts/processWl.js)**, vous pouvez trouver l'exemple pour le faire à partir d'un fichier CSV.
+### Du fichier CSV vers la liste d'objets javascript
 
 ```javascript
     const fs = require("fs");
@@ -69,8 +84,10 @@ Dans le **[ scrit : processWl.js](./scripts/processWl.js)**, vous pouvez trouver
 La liste d'objet obtenue aura ainsi cette forme
 ```javascript
 [
-    {address:'ox..',quantity: 2 },
-    ...
+    {address:'oxa..',quantity: 2 },
+    {address:'ox5..',quantity: 1 },
+    {address:'ox3..',quantity: 5 },
+    // ...
 ]
 ```
 
@@ -79,7 +96,7 @@ La liste d'objet obtenue aura ainsi cette forme
 Comme souvent nous allons utiliser le travail des autres pour parvenir à nos fins, la bibliothèque **[merkletreejs](https://github.com/miguelmota/merkletreejs)**
 va nous permettre de réaliser ceci simplement.
 
-Dans ce projet vous trouverez aussi une classe de ma composition permettant d'abstraire et donc de simplifier encore plus le processus :
+Dans ce projet vous trouverez aussi une classe permettant d'abstraire et donc de simplifier encore plus le processus :
 <br/>**[classe : MerkleCalculator.js](./scripts/MerkleCalculator.js)**
 
 
@@ -108,13 +125,12 @@ Dans ce projet vous trouverez aussi une classe de ma composition permettant d'ab
     console.log(`Root key for the smart contract :${calculator.root} `);
 ```
 
-Ce fichier "wl.json" pourra être envoyé vers le Dapp, il contient l'ensemble des informations nécessaire pour appeler le smart contrat
-et permettre d'afficher à l'utilisateur, s'il est WL ou non, et la quantité de NFT qu'ils vont mint.
+Ce fichier "wl.json" pourra être envoyé vers le "Dapp", il contient l'ensemble des informations nécessaire pour appeler le smart contrat
+et permettre d'afficher à l'utilisateur les informations nécessaires.
 
 Un exemple fonctionnel est disponible dans ce projet : ```npx hardhat run scripts/processWl.js```
 
-
-## et coté smart contract ?
+## Et coté smart contract ?
 
 ### Comment implementer la validation dans le smart contract.
 
@@ -141,7 +157,7 @@ ce qui nous donne :
     }
 ```
 
-> :warning: **La sécurité de cette méthode**  reposent sur le fait que pour calculer la feuille coté smart contract on utilise l'adresse de l'appelant : **msg.sender**, toute divergence par rapport à cette pratique nécessiterait d'avoir l'absolue certitude de ce que vous être en train de faire.
+> :warning: **La sécurité de cette méthode**  repose sur le fait que pour calculer la feuille coté smart contract on utilise l'adresse de l'appelant : **msg.sender**, toute divergence par rapport à cette pratique nécessiterait d'avoir l'absolue certitude de ce que vous être en train de faire.
 
 
 ### Comment ajouter ce point dans nos tests unitaires
@@ -185,8 +201,8 @@ Un exemple fonctionnel est disponible dans ce projet :  ``` npx hardhat test ```
 
 - [Explication du focntionnement de l'arbre de merkle](https://brilliant.org/wiki/merkle-tree/)
 - [La bibliothèque javascirpt : merkletreejs](https://www.npmjs.com/package/merkletreejs)
-- [La doc d'open zeppelin sur le sujet](https://docs.openzeppelin.com/contracts/3.x/api/cryptography)
+- [La documentation d'open zeppelin sur le sujet](https://docs.openzeppelin.com/contracts/3.x/api/cryptography)
 
 ## Images
 
-Image par <a href="https://pixabay.com/fr/users/thedigitalartist-202249/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=1777917">Pete Linforth</a> de <a href="https://pixabay.com/fr/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=1777917">Pixabay</a>
+[1] Image par <a href="https://pixabay.com/fr/users/thedigitalartist-202249/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=1777917">Pete Linforth</a> de <a href="https://pixabay.com/fr/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=1777917">Pixabay</a>
