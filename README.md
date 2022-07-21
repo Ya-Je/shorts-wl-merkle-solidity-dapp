@@ -1,6 +1,7 @@
 # White list , Merkle tree , Solidity and Dapp
 
-![This is an image](./mdimages/math.jpg)[1]
+![This is an image](./mdimages/math.jpg)
+[1]
 
 **_La petite histoire sous-jacente à ce petit projet de demonstration :_**
 Vous êtes le développeur d'un projet de NFT en charge de toute la partie technique, et les gars du marketing vous envoie un fichier
