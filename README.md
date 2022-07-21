@@ -181,14 +181,12 @@ Un exemple fonctionnel est disponible dans ce projet :  ``` npx hardhat test ```
 
 # Ressources
 
-## links
-
+## Liens
 
 - [Explication du focntionnement de l'arbre de merkle](https://brilliant.org/wiki/merkle-tree/)
 - [La bibliothèque javascirpt : merkletreejs](https://www.npmjs.com/package/merkletreejs)
 - [La doc d'open zeppelin sur le sujet](https://docs.openzeppelin.com/contracts/3.x/api/cryptography)
 
-
-##images
+## Images
 
 Image par <a href="https://pixabay.com/fr/users/thedigitalartist-202249/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=1777917">Pete Linforth</a> de <a href="https://pixabay.com/fr/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=1777917">Pixabay</a>
