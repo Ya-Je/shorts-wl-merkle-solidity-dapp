@@ -189,8 +189,6 @@ Ansi dans hardhat vous pouvez tester le focntionnement de ce processus comme sui
         await contract.connect(wl3).preSaleMint(3, merkleCalculator.getProof(wl3.address))
         expect(await contract.numberMinted(wl3.address) === 3);
     });
-
-
 ```
 
 Un exemple fonctionnel est disponible dans ce projet :  ``` npx hardhat test ```
@@ -200,7 +198,7 @@ Un exemple fonctionnel est disponible dans ce projet :  ``` npx hardhat test ```
 
 ## Liens
 
-- [Explication du focntionnement de l'arbre de merkle](https://brilliant.org/wiki/merkle-tree/)
+- [Explication du fonctionnement de l'arbre de merkle](https://brilliant.org/wiki/merkle-tree/)
 - [La bibliothèque javascirpt : merkletreejs](https://www.npmjs.com/package/merkletreejs)
 - [La documentation d'open zeppelin sur le sujet](https://docs.openzeppelin.com/contracts/3.x/api/cryptography)
 
